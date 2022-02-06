@@ -2,6 +2,7 @@ const { sendResponse } = require('../helpers/requestHandler.helper');
 const UserModel = require('../models/user.model');
 const { hashValue, verifyHash } = require('../helpers/hash.helper');
 const { generateJwt } = require('../helpers/jwt.helper');
+const { welcomeEmail } = require('../helpers/mail.helper');
 
 /**
  * Description: Login user into the application
@@ -48,6 +49,10 @@ exports.register = async (req, res, next) => {
         });
 
         if(user._id){
+            await welcomeEmail({
+                name: req.validated.name, 
+                email: req.validated.email
+            })
             return sendResponse(res, true, 200, "Registered Successfully");
         }
 

@@ -5,7 +5,7 @@
  */
 
 const app = require('../app');
-const debug = require('debug')('unittestpractice:server');
+const debug = require('debug')('node-skeleton:server');
 const http = require('http');
 const { APP_PORT } = require('../config/app.config');
 
