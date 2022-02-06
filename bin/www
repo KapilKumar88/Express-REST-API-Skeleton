@@ -7,12 +7,13 @@
 const app = require('../app');
 const debug = require('debug')('unittestpractice:server');
 const http = require('http');
+const { APP_PORT } = require('../config/app.config');
 
 /**
  * Get port from environment and store in Express.
  */
 
-const port = normalizePort(process.env.PORT || '3000');
+const port = normalizePort(APP_PORT || '3000');
 app.set('port', port);
 
 /**
@@ -34,16 +35,16 @@ server.on('listening', onListening);
  */
 
 function normalizePort(val) {
-  let port = parseInt(val, 10);
+  let appPort = parseInt(val, 10);
 
-  if (isNaN(port)) {
+  if (isNaN(appPort)) {
     // named pipe
     return val;
   }
 
-  if (port >= 0) {
+  if (appPort >= 0) {
     // port number
-    return port;
+    return appPort;
   }
 
   return false;

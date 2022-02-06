@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken');
-const jwtConfig = require('../config/jwt');
+const jwtConfig = require('../config/jwt.config');
 
 const generateJwt = async (payload) => {
     return jwt.sign(payload, jwtConfig.JWT_SECRET, { expiresIn: jwtConfig.JWT_EXPIRE_TIME });

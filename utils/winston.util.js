@@ -1,12 +1,13 @@
 const { createLogger, format, transports } = require('winston');
-const { DailyRotateFile } = require('winston/lib/winston/transports');
-const { DIR_NAME, ZIP_ARCHIVE, MAX_SIZE, MAX_FILES, LOG_FILE_NAME } = require('../config/winston.config');
+require('winston-daily-rotate-file');
+const { DIR_NAME, ZIP_ARCHIVE, MAX_SIZE, MAX_FILES, LOG_FILE_NAME, DATE_PATTERN } = require('../config/winston.config');
 const { combine, timestamp, prettyPrint } = format;
+const { APP_ENV } = require('../config/app.config');
 
-const dailyTransport = DailyRotateFile({
+const dailyTransport = new transports.DailyRotateFile({
     filename: LOG_FILE_NAME,
     dirname: DIR_NAME,
-    datePattern: 'YYYY-MM-DD-HH',
+    datePattern: DATE_PATTERN,
     zippedArchive: ZIP_ARCHIVE,
     maxSize: MAX_SIZE,
     maxFiles: MAX_FILES
@@ -15,18 +16,15 @@ const dailyTransport = DailyRotateFile({
 const logger = createLogger({
     format: combine(timestamp(), prettyPrint()),
     transports: [
-        dailyTransport,
-        new transports.Console({
-            level: 'debug',
-            handleExceptions: true,
-        })
+        dailyTransport
     ],
     exitOnError: false, // do not exit on handled exceptions
 });
 
-if (process.env.NODE_ENV !== 'production') {
-    logger.add(new winston.transports.Console({
-        format: winston.format.simple(),
+if (APP_ENV !== 'production') {
+    logger.add(new transports.Console({
+        level: 'debug',
+        handleExceptions: true,
     }));
 }
 
