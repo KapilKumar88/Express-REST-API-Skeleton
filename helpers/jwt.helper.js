@@ -9,8 +9,13 @@ const verifyToken = async (token) => {
     return jwt.verify(token, jwtConfig.JWT_SECRET);
 }
 
+const generateRefreshToken = async (payload) => {
+    return jwt.sign(payload, jwtConfig.JWT_REFRESH_TOKEN_SECRET, { expiresIn: jwtConfig.JWT_REFRESH_TOKEN_EXPIRE_TIME });
+}
+
 
 module.exports = {
     generateJwt,
-    verifyToken
+    verifyToken,
+    generateRefreshToken
 }

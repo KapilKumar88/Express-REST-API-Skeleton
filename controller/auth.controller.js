@@ -1,8 +1,9 @@
 const { sendResponse } = require('../helpers/requestHandler.helper');
 const UserModel = require('../models/user.model');
 const { hashValue, verifyHash } = require('../helpers/hash.helper');
-const { generateJwt } = require('../helpers/jwt.helper');
+const { generateJwt, generateRefreshToken } = require('../helpers/jwt.helper');
 const { welcomeEmail } = require('../helpers/mail.helper');
+const { v4: uuidV4 } = require('uuid');
 
 /**
  * Description: Login user into the application
@@ -12,19 +13,29 @@ const { welcomeEmail } = require('../helpers/mail.helper');
  */
 exports.login = async (req, res, next) => {
     try {
-
+        let uid = uuidV4();
         let result = await UserModel.findOne({ email: req.validated.email }).exec();
+        
         if (result == null || !(await verifyHash(req.validated.password, result.password))) {
             return sendResponse(res, false, 401, "Invalid emailId and password");
         }
 
+        await UserModel.findByIdAndUpdate(result._id, {
+            refreshToken: uid
+        });
+
         let token = await generateJwt({ id: result._id, name: result.name, email: result.email, userType: result.userType });
+
+        let refreshToken = await generateRefreshToken({
+            id: result._id,
+            uid
+        });
 
         if (token == undefined) {
             return sendResponse(res, false, 400, "Something went wrong please try again");
         }
 
-        return sendResponse(res, true, 200, "Login Successfully", { token });
+        return sendResponse(res, true, 200, "Login Successfully", { token, refreshToken });
     } catch (error) {
         next(error);
     }
@@ -48,9 +59,9 @@ exports.register = async (req, res, next) => {
             password: hash
         });
 
-        if(user._id){
+        if (user._id) {
             await welcomeEmail({
-                name: req.validated.name, 
+                name: req.validated.name,
                 email: req.validated.email
             })
             return sendResponse(res, true, 200, "Registered Successfully");
