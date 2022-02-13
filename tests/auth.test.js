@@ -87,7 +87,8 @@ describe('Testing login API (Endpoint: "/login")', () => {
                 statusCode: 200,
                 statusMessage: 'Login Successfully',
                 data: {
-                    token: expect.any(String)
+                    token: expect.any(String),
+                    refreshToken: expect.any(String)
                 }
             })
         );
