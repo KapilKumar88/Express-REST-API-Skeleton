@@ -1,7 +1,7 @@
 const { sendResponse } = require('../helpers/requestHandler.helper');
 const UserModel = require('../models/user.model');
 const { hashValue, verifyHash } = require('../helpers/hash.helper');
-const { generateJwt, generateRefreshToken } = require('../helpers/jwt.helper');
+const { generateJwt, generateRefreshToken, verifyToken } = require('../helpers/jwt.helper');
 const { welcomeEmail } = require('../helpers/mail.helper');
 const { v4: uuidV4 } = require('uuid');
 
@@ -15,7 +15,7 @@ exports.login = async (req, res, next) => {
     try {
         let uid = uuidV4();
         let result = await UserModel.findOne({ email: req.validated.email }).exec();
-        
+
         if (result == null || !(await verifyHash(req.validated.password, result.password))) {
             return sendResponse(res, false, 401, "Invalid emailId and password");
         }
@@ -65,6 +65,35 @@ exports.register = async (req, res, next) => {
                 email: req.validated.email
             })
             return sendResponse(res, true, 200, "Registered Successfully");
+        }
+
+        return sendResponse(res, true, 400, 'Something went wrong. Please try again')
+    } catch (error) {
+        next(error);
+    }
+}
+
+/*
+* Description: Refresh the access token
+* @param {*} req 
+* @param {*} res 
+* @param {*} next 
+*/
+exports.refreshToken = async (req, res, next) => {
+    try {
+        let result = await verifyToken(req.body.token, true);
+
+        if (result.uid) {
+            let checkToken = await UserModel.findOne({ refreshToken: result.uid });
+
+            if (checkToken._id == result.id) {
+                let token = await generateJwt({ id: checkToken._id, name: checkToken.name, email: checkToken.email, userType: checkToken.userType });
+
+                return sendResponse(res, true, 200, "Access token retrived successfully.", { token });
+
+            } else {
+                return sendResponse(res, true, 400, 'Invalid Token')
+            }
         }
 
         return sendResponse(res, true, 400, 'Something went wrong. Please try again')
