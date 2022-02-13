@@ -113,12 +113,15 @@ paths:
                     properties:
                       token:
                         type: string
+                      refreshToken:
+                        type: string
               example:
                 status: true           
                 statusCode: 200
                 statusMessage: "Login Successfully"
                 data:
                   token: "Randon string"
+                  refreshToken: "Randon string"
         422:
           description: Validation Errors
           content:
@@ -129,16 +132,63 @@ paths:
                 status: false           
                 statusCode: 422
                 statusMessage: "\"email\" is not allowed to be empty"
-        401:
-          description: Unauthorized
+        400:
+          description: Bad Request
           content:
             application/json:
               schema: 
                 $ref: '#/components/schemas/resWithoutData'
               example:
                 status: false           
-                statusCode: 401
-                statusMessage: "Invalid emailId and password"
+                statusCode: 400
+                statusMessage: "Something went wrong please try again"
+        500:
+          $ref: '#/components/responses/500Res'
+  /token:
+    post:
+      summary: Refresh Token API
+      tags: [Authentication]
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: "object"
+              required:
+                - token
+              properties:
+                token:
+                  type: "string"
+                  example: "Random string"
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema: 
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  statusCode:
+                    type: number
+                  statusMessage:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                      token:
+                        type: string
+              example:
+                status: true           
+                statusCode: 200
+                statusMessage: "Access token retrived successfully."
+                data:
+                  token: "Randon string"
         400:
           description: Bad Request
           content:
