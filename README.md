@@ -14,6 +14,6 @@
 2. Unit testing of components using ```jest``` framework.
 3. Access token generation using ```jsonwebtoken```.
 4. For Email nodemailer is implemented.
-5. For validation the inout data ```joi``` validator is used.
+5. For validating the input data ```joi``` validator is used.
 6. Mongodb is used as database.
 7. ```winston``` is used as logger.
