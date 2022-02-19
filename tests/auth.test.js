@@ -88,6 +88,8 @@ describe('Testing login API (Endpoint: "/login")', () => {
                 statusMessage: 'Login Successfully',
                 data: {
                     token: expect.any(String),
+                    tokenExpireAt: expect.any(Number),
+                    refreshTokenExpireAt: expect.any(Number),
                     refreshToken: expect.any(String)
                 }
             })
