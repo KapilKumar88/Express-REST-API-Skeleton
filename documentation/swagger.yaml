@@ -7,13 +7,13 @@ servers:
   - url: http://localhost:3000
     description: local URL
 tags:
-- name: "Authentication"
-  description: "Authentication related API's like login, register, etc"
-- name: "Task"
-  description: "Task CRUD API's"
+  - name: "Authentication"
+    description: "Authentication related API's like login, register, etc"
+  - name: "Task"
+    description: "Task CRUD API's"
 schemes:
-- "https"
-- "http"
+  - "https"
+  - "http"
 paths:
   /register:
     post:
@@ -22,7 +22,7 @@ paths:
       consumes:
         - "application/json"
       produces:
-      - "application/json"
+        - "application/json"
       requestBody:
         required: true
         content:
@@ -35,7 +35,7 @@ paths:
                 - password
                 - repeat_password
               properties:
-                name: 
+                name:
                   type: "string"
                   example: "John"
                 email:
@@ -52,24 +52,24 @@ paths:
           description: OK
           content:
             application/json:
-              schema: 
-                $ref: '#/components/schemas/resWithoutData'
+              schema:
+                $ref: "#/components/schemas/resWithoutData"
               example:
-                status: true           
+                status: true
                 statusCode: 200
                 statusMessage: "Registered Successfully"
         422:
           description: Validation Errors
           content:
             application/json:
-              schema: 
-                $ref: '#/components/schemas/resWithoutData'
+              schema:
+                $ref: "#/components/schemas/resWithoutData"
               example:
-                status: false           
+                status: false
                 statusCode: 422
-                statusMessage: "\"name\" is not allowed to be empty"
+                statusMessage: '"name" is not allowed to be empty'
         500:
-          $ref: '#/components/responses/500Res'
+          $ref: "#/components/responses/500Res"
   /login:
     post:
       summary: Login API
@@ -99,7 +99,7 @@ paths:
           description: OK
           content:
             application/json:
-              schema: 
+              schema:
                 type: object
                 properties:
                   status:
@@ -116,7 +116,7 @@ paths:
                       refreshToken:
                         type: string
               example:
-                status: true           
+                status: true
                 statusCode: 200
                 statusMessage: "Login Successfully"
                 data:
@@ -126,24 +126,24 @@ paths:
           description: Validation Errors
           content:
             application/json:
-              schema: 
-                $ref: '#/components/schemas/resWithoutData'
+              schema:
+                $ref: "#/components/schemas/resWithoutData"
               example:
-                status: false           
+                status: false
                 statusCode: 422
-                statusMessage: "\"email\" is not allowed to be empty"
+                statusMessage: '"email" is not allowed to be empty'
         400:
           description: Bad Request
           content:
             application/json:
-              schema: 
-                $ref: '#/components/schemas/resWithoutData'
+              schema:
+                $ref: "#/components/schemas/resWithoutData"
               example:
-                status: false           
+                status: false
                 statusCode: 400
                 statusMessage: "Something went wrong please try again"
         500:
-          $ref: '#/components/responses/500Res'
+          $ref: "#/components/responses/500Res"
   /token:
     post:
       summary: Refresh Token API
@@ -169,7 +169,7 @@ paths:
           description: OK
           content:
             application/json:
-              schema: 
+              schema:
                 type: object
                 properties:
                   status:
@@ -184,7 +184,7 @@ paths:
                       token:
                         type: string
               example:
-                status: true           
+                status: true
                 statusCode: 200
                 statusMessage: "Access token retrived successfully."
                 data:
@@ -193,14 +193,14 @@ paths:
           description: Bad Request
           content:
             application/json:
-              schema: 
-                $ref: '#/components/schemas/resWithoutData'
+              schema:
+                $ref: "#/components/schemas/resWithoutData"
               example:
-                status: false           
+                status: false
                 statusCode: 400
                 statusMessage: "Something went wrong please try again"
         500:
-          $ref: '#/components/responses/500Res'
+          $ref: "#/components/responses/500Res"
 components:
   # Reusable schemas (data models)
   schemas:
@@ -211,52 +211,52 @@ components:
           type: boolean
         statusCode:
           type: number
-        statusMessage: 
+        statusMessage:
           type: string
-    
+
   # Reusable path, query, header and cookie parameters
   parameters:
-    
+
   # Security scheme definitions (see Authentication)
   securitySchemes:
-    bearerAuth:            # arbitrary name for the security scheme
+    bearerAuth: # arbitrary name for the security scheme
       type: http
       scheme: bearer
-      bearerFormat: JWT 
-    
+      bearerFormat: JWT
+
   # Reusable request bodies
   requestBodies:
-    
+
   # Reusable responses, such as 401 Unauthorized or 400 Bad Request
   responses:
     500Res:
       description: Server Errors
       content:
         application/json:
-          schema: 
+          schema:
             type: object
             properties:
               status:
                 type: boolean
               statusCode:
                 type: number
-              statusMessage: 
+              statusMessage:
                 type: string
-            example: 
+            example:
               status: false
               statusCode: 500
-              message: 'Internal server error'  
-    
+              message: "Internal server error"
+
   # Reusable response headers
   headers:
-    
+
   # Reusable examples
   examples:
-  
+
   # Reusable links
   links:
-    
+
   # Reusable callbacks
   callbacks:
 security:
-  - bearerAuth: []      
+  - bearerAuth: []

@@ -1,4 +1,4 @@
 module.exports = {
-    validateMongoObjectId: require('./validateMongoObjectId.rule'),
-    uniqueEmail: require('./uniqueEmail.rule')
-}
+  validateMongoObjectId: require("./validateMongoObjectId.rule"),
+  uniqueEmail: require("./uniqueEmail.rule"),
+};
