@@ -5,7 +5,7 @@ const logger = require("./winston.util");
 // mongo db connection
 mongoose.connect(`${dbConfig.DB_CONNECTION}`);
 const dbConn = mongoose.connection;
-dbConn.on("error", () => {
+dbConn.on('error', () => {
   logger.error("Mongodb connection error");
 });
 dbConn.once("open", function () {
