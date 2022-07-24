@@ -1,6 +1,5 @@
 require("dotenv").config();
 require("./utils/db-connection.util");
-const createError = require("http-errors");
 const express = require("express");
 const path = require("path");
 const cookieParser = require("cookie-parser");
@@ -33,13 +32,8 @@ app.use(
   swaggerUi.setup(YAML.load("./documentation/swagger.yaml"))
 );
 
-// catch 404 and forward to error handler
-app.use(function (req, res, next) {
-  next(createError(404));
-});
-
 // error handler
-app.use(function (err, req, res, next) {
+app.use(function (err, req, res) {
   logger.error(
     `${err.status || 500} | ${err.message} | ${req.originalUrl} | ${
       req.method
