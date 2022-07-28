@@ -4,6 +4,12 @@ const { APP_NAME } = require("../config/app.config");
 const logger = require("../utils/winston.util");
 const path = require("path");
 
+/**
+ * This fucntion will render a welcome email template
+ * and will send a mail to the given mail ID
+ * @param {name, email} params
+ * @returns
+ */
 const welcomeEmail = async (params) => {
   try {
     const templateStr = await ejs.renderFile(

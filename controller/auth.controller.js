@@ -11,6 +11,7 @@ const {
   JWT_REFRESH_TOKEN_EXPIRE_TIME,
   JWT_REFRESH_TOKEN_EXPIRE_TIME_UNIT,
 } = require("../config/jwt.config");
+const userService = require("../services/user.service");
 
 /**
  * Description: Login user into the application
@@ -77,7 +78,7 @@ exports.register = async (req, res, next) => {
   try {
     const hash = await hashValue(req.validated.password);
 
-    const user = await UserModel.create({
+    const user = await userService.create({
       name: req.validated.name,
       email: req.validated.email,
       password: hash,
@@ -85,8 +86,8 @@ exports.register = async (req, res, next) => {
 
     if (user._id) {
       await welcomeEmail({
-        name: req.validated.name,
-        email: req.validated.email,
+        name: user.name,
+        email: user.email,
       });
       return sendResponse(res, true, 200, "Registered Successfully");
     }

@@ -7,9 +7,7 @@ const morgan = require("morgan");
 const logger = require("./utils/winston.util");
 const swaggerUi = require("swagger-ui-express");
 const YAML = require("yamljs");
-const { sendResponse } = require("./helpers/requestHandler.helper");
-// Route files
-const indexRouter = require("./routes/index.route");
+const { exceptionHandler } = require("./exceptionHandling");
 
 const app = express();
 app.disable("x-powered-by");
@@ -25,7 +23,8 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 
-app.use("/", indexRouter);
+// routes
+require("./routes/index.route")(app);
 app.use(
   "/api-docs",
   swaggerUi.serve,
@@ -33,13 +32,8 @@ app.use(
 );
 
 // error handler
-app.use(function (err, req, res) {
-  logger.error(
-    `${err.status || 500} | ${err.message} | ${req.originalUrl} | ${
-      req.method
-    } | ${req.ip}`
-  );
-  return sendResponse(res, false, err.status || 500, "Internal server error.");
+app.use((err, req, res, _next) => {
+  return exceptionHandler(err, req, res);
 });
 
 module.exports = app;

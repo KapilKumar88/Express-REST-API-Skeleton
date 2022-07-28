@@ -2,13 +2,13 @@ const sendResponse = (
   res,
   status = false,
   statusCode = 200,
-  statusMessage = "Ok",
+  message = "Ok",
   data = null
 ) => {
   const resSchema = {
     status,
     statusCode,
-    statusMessage,
+    message,
   };
 
   if (data != null) {

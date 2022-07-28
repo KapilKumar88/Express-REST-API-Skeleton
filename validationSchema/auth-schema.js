@@ -1,7 +1,7 @@
 const Joi = require("joi");
 const { sendResponse } = require("../helpers/requestHandler.helper");
-const { uniqueEmail } = require("./rules");
 const { validate: uuidValidate } = require("uuid");
+const userService = require("../services/user.service");
 
 const loginValidation = async (req, res, next) => {
   try {
@@ -39,7 +39,7 @@ const registerValidation = async (req, res, next) => {
       return sendResponse(res, false, 422, error.details[0].message);
     }
 
-    if (!(await uniqueEmail(value.email))) {
+    if ((await userService.getCount({ email: value.email })) > 0) {
       return sendResponse(
         res,
         false,
