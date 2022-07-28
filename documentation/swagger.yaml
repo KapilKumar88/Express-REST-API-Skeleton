@@ -57,7 +57,7 @@ paths:
               example:
                 status: true
                 statusCode: 200
-                statusMessage: "Registered Successfully"
+                message: "Registered Successfully"
         422:
           description: Validation Errors
           content:
@@ -67,7 +67,7 @@ paths:
               example:
                 status: false
                 statusCode: 422
-                statusMessage: '"name" is not allowed to be empty'
+                message: '"name" is not allowed to be empty'
         500:
           $ref: "#/components/responses/500Res"
   /login:
@@ -106,7 +106,7 @@ paths:
                     type: boolean
                   statusCode:
                     type: number
-                  statusMessage:
+                  message:
                     type: string
                   data:
                     type: object
@@ -118,7 +118,7 @@ paths:
               example:
                 status: true
                 statusCode: 200
-                statusMessage: "Login Successfully"
+                message: "Login Successfully"
                 data:
                   token: "Randon string"
                   refreshToken: "Randon string"
@@ -131,7 +131,7 @@ paths:
               example:
                 status: false
                 statusCode: 422
-                statusMessage: '"email" is not allowed to be empty'
+                message: '"email" is not allowed to be empty'
         400:
           description: Bad Request
           content:
@@ -141,7 +141,7 @@ paths:
               example:
                 status: false
                 statusCode: 400
-                statusMessage: "Something went wrong please try again"
+                message: "Something went wrong please try again"
         500:
           $ref: "#/components/responses/500Res"
   /token:
@@ -186,7 +186,7 @@ paths:
               example:
                 status: true
                 statusCode: 200
-                statusMessage: "Access token retrived successfully."
+                message: "Access token retrived successfully."
                 data:
                   token: "Randon string"
         400:
@@ -198,7 +198,7 @@ paths:
               example:
                 status: false
                 statusCode: 400
-                statusMessage: "Something went wrong please try again"
+                message: "Something went wrong please try again"
         500:
           $ref: "#/components/responses/500Res"
 components:
@@ -211,7 +211,7 @@ components:
           type: boolean
         statusCode:
           type: number
-        statusMessage:
+        message:
           type: string
 
   # Reusable path, query, header and cookie parameters
@@ -240,7 +240,7 @@ components:
                 type: boolean
               statusCode:
                 type: number
-              statusMessage:
+              message:
                 type: string
             example:
               status: false

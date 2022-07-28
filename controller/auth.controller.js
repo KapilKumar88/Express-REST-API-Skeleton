@@ -18,6 +18,7 @@ const userService = require("../services/user.service");
  * @param {email, password} req
  * @param {*} res
  * @param {*} next
+ * @returns JSON
  */
 exports.login = async (req, res, next) => {
   try {
@@ -25,9 +26,9 @@ exports.login = async (req, res, next) => {
     const refreshTokenExpTime = moment()
       .add(JWT_REFRESH_TOKEN_EXPIRE_TIME, JWT_REFRESH_TOKEN_EXPIRE_TIME_UNIT)
       .unix();
-    const result = await UserModel.findOne({
+    const result = await userService.findOne({
       email: req.validated.email,
-    }).exec();
+    });
 
     if (
       result === null ||
@@ -36,16 +37,13 @@ exports.login = async (req, res, next) => {
       return sendResponse(res, false, 401, "Invalid emailId and password");
     }
 
-    await UserModel.findByIdAndUpdate(result._id, {
+    await userService.updateUserById(result._id, {
       refreshToken: uid,
       refreshTokenExpireAt: refreshTokenExpTime,
     });
 
     const token = await generateJwt({
       id: result._id,
-      name: result.name,
-      email: result.email,
-      userType: result.userType,
     });
 
     if (token === undefined) {

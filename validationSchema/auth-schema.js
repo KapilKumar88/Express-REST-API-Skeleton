@@ -2,23 +2,14 @@ const Joi = require("joi");
 const { sendResponse } = require("../helpers/requestHandler.helper");
 const { validate: uuidValidate } = require("uuid");
 const userService = require("../services/user.service");
+const { validateReqWithSchema } = require("../helpers/common.helper");
 
 const loginValidation = async (req, res, next) => {
   try {
-    const schema = Joi.object({
+    validateReqWithSchema(req, res, next, {
       email: Joi.string().email().required(),
       password: Joi.string().required(),
     });
-
-    const { value, error } = schema.validate(req.body);
-
-    if (error !== undefined) {
-      return sendResponse(res, false, 422, error.details[0].message);
-    }
-
-    // set the variable in the request for validated data
-    req.validated = value;
-    next();
   } catch (error) {
     next(error);
   }

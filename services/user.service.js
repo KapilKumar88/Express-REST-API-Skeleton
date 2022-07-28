@@ -1,7 +1,7 @@
 const userModel = require("../models/user.model");
 
 /**
- * Create a record in user table
+ * Description: Create a record in user table
  * @param {name, email, password} params
  * @returns Promise
  */
@@ -14,7 +14,7 @@ exports.create = (params) => {
 };
 
 /**
- * Count the documents by the given filter if present
+ * Description: Count the documents by the given filter if present
  * @param {*} filter
  * @returns Promise
  */
@@ -24,4 +24,23 @@ exports.getCount = (filter = {}) => {
   }
 
   return userModel.countDocuments();
+};
+
+/**
+ * Description: find the user by ID and update details
+ * @param id mongoose.Schema.Types.ObjectId
+ * @param {*} params
+ * @returns Promise
+ */
+exports.updateUserById = (id, params) => {
+  return userModel.findByIdAndUpdate(id, params);
+};
+
+/**
+ * Description: Find the user in Database
+ * @param {*} filter
+ * @returns Promise
+ */
+exports.findOne = (filter) => {
+  return userModel.findOne(filter).exec();
 };
