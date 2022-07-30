@@ -9,89 +9,48 @@ describe("Validation tests for the Authentication API's", () => {
       name: "",
       email: "",
       password: "",
-      expected: {
-        status: false,
-        statusCode: 422,
-        statusMessage: '"name" is not allowed to be empty',
-      },
     },
     {
       testTitle: '"name" field max length validation',
       name: faker.lorem.words(50),
       email: "",
       password: "",
-      expected: {
-        status: false,
-        statusCode: 422,
-        statusMessage:
-          '"name" length must be less than or equal to 50 characters long',
-      },
     },
     {
       testTitle: '"name" field string validation',
       name: faker.datatype.number(),
       email: "",
       password: "",
-      expected: {
-        status: false,
-        statusCode: 422,
-        statusMessage: '"name" must be a string',
-      },
     },
     {
       testTitle: '"email" field required validation',
       name: faker.name.findName(),
       email: "",
       password: "",
-      expected: {
-        status: false,
-        statusCode: 422,
-        statusMessage: '"email" is not allowed to be empty',
-      },
     },
     {
       testTitle: '"email" field string validation',
       name: faker.name.findName(),
       email: faker.datatype.number(),
       password: "",
-      expected: {
-        status: false,
-        statusCode: 422,
-        statusMessage: '"email" must be a string',
-      },
     },
     {
       testTitle: '"password" field required validation',
       name: faker.name.findName(),
       email: faker.internet.exampleEmail(),
       password: "",
-      expected: {
-        status: false,
-        statusCode: 422,
-        statusMessage: '"password" is not allowed to be empty',
-      },
     },
     {
       testTitle: '"password" field min length validation',
       name: faker.name.findName(),
       email: faker.internet.exampleEmail(),
       password: faker.internet.password(5),
-      expected: {
-        status: false,
-        statusCode: 422,
-        statusMessage: '"password" length must be at least 8 characters long',
-      },
     },
     {
       testTitle: '"repeat_password" field required validation',
       name: faker.name.findName(),
       email: faker.internet.exampleEmail(),
       password: faker.internet.password(8),
-      expected: {
-        status: false,
-        statusCode: 422,
-        statusMessage: '"password" missing required peer "repeat_password"',
-      },
     },
     {
       testTitle: '"repeat_password" field mismatch validation',
@@ -99,16 +58,24 @@ describe("Validation tests for the Authentication API's", () => {
       email: faker.internet.exampleEmail(),
       password: faker.internet.password(8),
       repeat_password: faker.internet.password(8),
-      expected: {
-        status: false,
-        statusCode: 422,
-        statusMessage: '"repeat_password" must be [ref:password]',
-      },
     },
   ])(`Validation test (Endpoint: /register): $testTitle`, async (params) => {
-    const { expected, testTitle, ...payload } = params;
+    const { _testTitle, ...payload } = params;
     const response = await supertest(app).post("/register").send(payload);
-    expect(response.body).toEqual(expected);
+    expect(response.body).toEqual(
+      expect.objectContaining({
+        status: false,
+      }),
+      expect.objectContaining({
+        statusCode: 422,
+      }),
+      expect.objectContaining({
+        message: "Validations Error",
+      }),
+      expect.objectContaining({
+        data: expect.anything(),
+      })
+    );
   });
 
   test.each([
@@ -116,36 +83,34 @@ describe("Validation tests for the Authentication API's", () => {
       testTitle: '"email" field required validation',
       email: "",
       password: "",
-      expected: {
-        status: false,
-        statusCode: 422,
-        statusMessage: '"email" is not allowed to be empty',
-      },
     },
     {
       testTitle: '"email" field string validation',
       email: faker.datatype.number(),
       password: "",
-      expected: {
-        status: false,
-        statusCode: 422,
-        statusMessage: '"email" must be a string',
-      },
     },
     {
       testTitle: '"password" field required validation',
       email: faker.internet.exampleEmail(),
       password: "",
-      expected: {
-        status: false,
-        statusCode: 422,
-        statusMessage: '"password" is not allowed to be empty',
-      },
     },
   ])(`Validation test (Endpoint: /login): $testTitle`, async (params) => {
-    const { expected, testTitle, ...payload } = params;
+    const { _testTitle, ...payload } = params;
     const response = await supertest(app).post("/login").send(payload);
-    expect(response.body).toEqual(expected);
+    expect(response.body).toEqual(
+      expect.objectContaining({
+        status: false,
+      }),
+      expect.objectContaining({
+        statusCode: 422,
+      }),
+      expect.objectContaining({
+        message: "Validations Error",
+      }),
+      expect.objectContaining({
+        data: expect.anything(),
+      })
+    );
   });
 });
 
@@ -162,7 +127,7 @@ describe('Testing register API (Endpoint: "/register")', () => {
     expect(response.body).toEqual({
       status: true,
       statusCode: 200,
-      statusMessage: "Registered Successfully",
+      message: "Registered Successfully",
     });
   });
 });
@@ -188,7 +153,7 @@ describe('Testing login API (Endpoint: "/login")', () => {
     expect(response.body).toEqual({
       status: false,
       statusCode: 401,
-      statusMessage: "Invalid emailId and password",
+      message: "Invalid emailId and password",
     });
   });
 
@@ -202,7 +167,7 @@ describe('Testing login API (Endpoint: "/login")', () => {
       expect.objectContaining({
         status: true,
         statusCode: 200,
-        statusMessage: "Login Successfully",
+        message: "Login Successfully",
         data: {
           token: expect.any(String),
           tokenExpireAt: expect.any(Number),

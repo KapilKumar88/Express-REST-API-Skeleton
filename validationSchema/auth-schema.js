@@ -27,16 +27,17 @@ const registerValidation = async (req, res, next) => {
     const { value, error } = schema.validate(req.body);
 
     if (error !== undefined) {
-      return sendResponse(res, false, 422, error.details[0].message);
+      return sendResponse(res, false, 422, "Validations Error", {
+        message: error?.details[0]?.message,
+        field: error?.details[0]?.context?.key,
+      });
     }
 
     if ((await userService.getCount({ email: value.email })) > 0) {
-      return sendResponse(
-        res,
-        false,
-        422,
-        "Email Id already exists. Please try with different."
-      );
+      return sendResponse(res, false, 422, "Validations Error", {
+        message: "Email Id already exists. Please try with different.",
+        field: "email",
+      });
     }
 
     // set the variable in the request for validated data
