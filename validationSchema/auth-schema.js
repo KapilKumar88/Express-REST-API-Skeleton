@@ -1,8 +1,8 @@
 const Joi = require("joi");
 const { sendResponse } = require("../helpers/requestHandler.helper");
-const { validate: uuidValidate } = require("uuid");
 const userService = require("../services/user.service");
 const { validateReqWithSchema } = require("../helpers/common.helper");
+const validateUUID = require("./rules/validateUUID.rule");
 
 const loginValidation = async (req, res, next) => {
   try {
@@ -49,23 +49,12 @@ const registerValidation = async (req, res, next) => {
 
 const refreshTokenValidation = async (req, res, next) => {
   try {
-    const schema = Joi.object({
-      token: Joi.string().required(),
+    validateReqWithSchema(req, res, next, {
+      token: Joi.string()
+        .required()
+        .custom(validateUUID)
+        .message("Invalid Token"),
     });
-
-    const { value, error } = schema.validate(req.body);
-
-    if (error !== undefined) {
-      return sendResponse(res, false, 422, error.details[0].message);
-    }
-
-    if (!uuidValidate(value.token)) {
-      return sendResponse(res, false, 422, "Invalid Token.");
-    }
-
-    // set the variable in the request for validated data
-    req.validated = value;
-    next();
   } catch (error) {
     next(error);
   }

@@ -1,5 +1,4 @@
 const { sendResponse } = require("../helpers/requestHandler.helper");
-const UserModel = require("../models/user.model");
 const { hashValue, verifyHash } = require("../helpers/hash.helper");
 const { generateJwt } = require("../helpers/jwt.helper");
 const { welcomeEmail } = require("../helpers/mail.helper");
@@ -71,6 +70,7 @@ exports.login = async (req, res, next) => {
  * @param {name, email, password} req
  * @param {*} res
  * @param {*} next
+ * @return JSON
  */
 exports.register = async (req, res, next) => {
   try {
@@ -106,10 +106,11 @@ exports.register = async (req, res, next) => {
  * @param {*} req
  * @param {*} res
  * @param {*} next
+ * @return JSON
  */
 exports.refreshToken = async (req, res, next) => {
   try {
-    const checkToken = await UserModel.findOne({
+    const checkToken = await userService.findOne({
       refreshToken: req.validated.token,
     });
 
@@ -117,9 +118,6 @@ exports.refreshToken = async (req, res, next) => {
       if (moment().unix() < checkToken.refreshTokenExpireAt) {
         const token = await generateJwt({
           id: checkToken._id,
-          name: checkToken.name,
-          email: checkToken.email,
-          userType: checkToken.userType,
         });
 
         return sendResponse(

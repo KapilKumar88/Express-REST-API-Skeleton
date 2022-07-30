@@ -42,5 +42,5 @@ exports.updateUserById = (id, params) => {
  * @returns Promise
  */
 exports.findOne = (filter) => {
-  return userModel.findOne(filter).exec();
+  return userModel.findOne(filter);
 };
