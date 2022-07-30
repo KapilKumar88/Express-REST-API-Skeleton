@@ -2,7 +2,7 @@ openapi: 3.0.0
 info:
   description: ""
   version: "1.0.0"
-  title: "Todo API"
+  title: "Task API"
 servers:
   - url: http://localhost:3000
     description: local URL
@@ -113,6 +113,10 @@ paths:
                     properties:
                       token:
                         type: string
+                      tokenExpireAt:
+                        type: number
+                      refreshTokenExpireAt:
+                        type: number
                       refreshToken:
                         type: string
               example:
@@ -121,7 +125,9 @@ paths:
                 message: "Login Successfully"
                 data:
                   token: "Randon string"
+                  tokenExpireAt: 1659173406
                   refreshToken: "Randon string"
+                  refreshTokenExpireAt: 1661763606
         422:
           description: Validation Errors
           content:
@@ -176,7 +182,7 @@ paths:
                     type: boolean
                   statusCode:
                     type: number
-                  statusMessage:
+                  message:
                     type: string
                   data:
                     type: object
@@ -201,6 +207,325 @@ paths:
                 message: "Something went wrong please try again"
         500:
           $ref: "#/components/responses/500Res"
+  /task/create:
+    post:
+      summary: Create a Task
+      tags: [Task]
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: "object"
+              required:
+                - name
+                - description
+              properties:
+                name:
+                  type: "string"
+                  example: "First Task"
+                description:
+                  type: "string"
+                  example: "Task Description"
+                status:
+                  type: "string"
+                  example: "todo"
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  statusCode:
+                    type: number
+                  message:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                      token:
+                        type: string
+              example:
+                status: true
+                statusCode: 201
+                message: "Task created successfully"
+                data:
+                  name: "First Task"
+                  description: "Task Description"
+                  status: "todo"
+                  userId: "62e2b992d0ba1d28f6b3debe"
+                  _id: "62e4d99186f0d10ced93df13"
+                  createdAt: "2022-07-30T07:11:13.913Z"
+                  updatedAt: "2022-07-30T07:11:13.913Z"
+        422:
+          description: Validation Errors
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/resWithoutData"
+              example:
+                status: false
+                statusCode: 422
+                message: "Validation Error"
+                data:
+                  message: '"status" must be one of [in-progress, done, todo]'
+                  field: "status"
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/resWithoutData"
+              example:
+                status: false
+                statusCode: 400
+                message: "Something went wrong please try again"
+        500:
+          $ref: "#/components/responses/500Res"
+  /task/update/{id}:
+    put:
+      summary: Update a Task
+      tags: [Task]
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+            required: true
+            description: Id of the task
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: "object"
+              required:
+                - name
+                - description
+              properties:
+                name:
+                  type: "string"
+                  example: "Update Task"
+                description:
+                  type: "string"
+                  example: "Update Description"
+                status:
+                  type: "string"
+                  example: "ready"
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  statusCode:
+                    type: number
+                  message:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                      token:
+                        type: string
+              example:
+                status: true
+                statusCode: 200
+                message: "Task updated successfully"
+                data:
+                  name: "First Task"
+                  description: "Task Description"
+                  status: "todo"
+                  userId: "62e2b992d0ba1d28f6b3debe"
+                  _id: "62e4d99186f0d10ced93df13"
+                  createdAt: "2022-07-30T07:11:13.913Z"
+                  updatedAt: "2022-07-30T07:11:13.913Z"
+        422:
+          description: Validation Errors
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/resWithoutData"
+              example:
+                status: false
+                statusCode: 422
+                message: "Validation Error"
+                data:
+                  message: '"status" must be one of [in-progress, done, todo]'
+                  field: "status"
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/resWithoutData"
+              example:
+                status: false
+                statusCode: 400
+                message: "Something went wrong please try again"
+        500:
+          $ref: "#/components/responses/500Res"
+  /task/list:
+    get:
+      summary: Fetch list of all My Task
+      tags: [Task]
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      parameters:
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            required: true
+            description: Number of records needs to be fetched in one request
+        - in: query
+          name: page
+          schema:
+            type: integer
+            required: true
+            description: Page number
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: true
+                  statusCode:
+                    type: number
+                    example: 200
+                  message:
+                    type: string
+                    example: "Task list fetched successfully"
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        _id:
+                          type: string
+                          example: "62e4d99186f0d10ced93df13"
+                        name:
+                          type: string
+                          example: "First Task"
+                        description:
+                          type: string
+                          example: "Task Description"
+                        status:
+                          type: string
+                          example: "todo"
+                        userId:
+                          type: string
+                          example: "62e2b992d0ba1d28f6b3debe"
+                        createdAt:
+                          type: date
+                          example: "2022-07-30T07:11:13.913Z"
+                        updatedAt:
+                          type: date
+                          example: "2022-07-30T07:11:13.913Z"
+        422:
+          description: Validation Errors
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/resWithoutData"
+              example:
+                status: false
+                statusCode: 422
+                message: "Validation Error"
+                data:
+                  message: '"page" is required'
+                  field: "page"
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/resWithoutData"
+              example:
+                status: false
+                statusCode: 400
+                message: "Something went wrong please try again"
+        500:
+          $ref: "#/components/responses/500Res"
+  /task/delete/{id}:
+    delete:
+      summary: Delete a task
+      tags: [Task]
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+            required: true
+            description: Id of task
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: true
+                  statusCode:
+                    type: number
+                    example: 200
+                  message:
+                    type: string
+                    example: "Task deleted successfully"
+        422:
+          description: Validation Errors
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/resWithoutData"
+              example:
+                status: false
+                statusCode: 422
+                message: "Validation Error"
+                data:
+                  message: '"id" is required'
+                  field: "id"
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/resWithoutData"
+              example:
+                status: false
+                statusCode: 400
+                message: "Something went wrong please try again"
+        500:
+          $ref: "#/components/responses/500Res"
 components:
   # Reusable schemas (data models)
   schemas:
@@ -213,6 +538,8 @@ components:
           type: number
         message:
           type: string
+        data:
+          type: object
 
   # Reusable path, query, header and cookie parameters
   parameters:
