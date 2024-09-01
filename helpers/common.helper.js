@@ -1,4 +1,5 @@
 const Joi = require("joi");
+const crypto = require("crypto");
 const { sendResponse } = require("./requestHandler.helper");
 
 /**
@@ -25,4 +26,9 @@ exports.validateReqWithSchema = (req, res, next, validationSchema) => {
   // set the variable in the request for validated data
   req.validated = value;
   next();
+};
+
+// Generate a random token
+exports.generateRandomToken = (length = 32) => {
+  return crypto.randomBytes(length).toString("hex");
 };

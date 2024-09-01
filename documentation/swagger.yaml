@@ -207,6 +207,116 @@ paths:
                 message: "Something went wrong please try again"
         500:
           $ref: "#/components/responses/500Res"
+  /resend-email-verification:
+    post:
+      summary: Resend Email verification instructions
+      tags: [Authentication]
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: "object"
+              required:
+                - email
+              properties:
+                email:
+                  type: "string"
+                  example: "example.com"
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  statusCode:
+                    type: number
+                  message:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                      token:
+                        type: string
+              example:
+                status: true
+                statusCode: 200
+                message: "Instruction send successfully."
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/resWithoutData"
+              example:
+                status: false
+                statusCode: 400
+                message: "Something went wrong please try again"
+        500:
+          $ref: "#/components/responses/500Res"
+  /verify-email:
+    post:
+      summary: Verify your email
+      tags: [Authentication]
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: "object"
+              required:
+                - token
+              properties:
+                token:
+                  type: "token"
+                  example: "Random string"
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  statusCode:
+                    type: number
+                  message:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                      token:
+                        type: string
+              example:
+                status: true
+                statusCode: 200
+                message: "Email verified successfully"
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/resWithoutData"
+              example:
+                status: false
+                statusCode: 400
+                message: "Something went wrong please try again"
+        500:
+          $ref: "#/components/responses/500Res"
   /task/create:
     post:
       summary: Create a Task

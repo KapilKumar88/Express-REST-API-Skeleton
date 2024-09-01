@@ -61,8 +61,30 @@ const refreshTokenValidation = async (req, res, next) => {
   }
 };
 
+const emailVerificationValidation = async (req, res, next) => {
+  try {
+    validateReqWithSchema(req, res, next, {
+      token: Joi.string().required().label("Token"),
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+const resendEmailVerification = async (req, res, next) => {
+  try {
+    validateReqWithSchema(req, res, next, {
+      email: Joi.string().email().required().label("Email"),
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   loginValidation,
   registerValidation,
   refreshTokenValidation,
+  resendEmailVerification,
+  emailVerificationValidation,
 };

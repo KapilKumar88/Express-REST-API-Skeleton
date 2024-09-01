@@ -37,6 +37,16 @@ exports.updateUserById = (id, params) => {
 };
 
 /**
+ * Description: find the user by email and update details
+ * @param email String
+ * @param {*} params
+ * @returns Promise
+ */
+exports.updateUserByEmail = (email, params) => {
+  return userModel.findOneAndUpdate({ email: email }, params);
+};
+
+/**
  * Description: Find the user in Database
  * @param {*} filter
  * @returns Promise

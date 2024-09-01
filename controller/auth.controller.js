@@ -1,7 +1,10 @@
 const { sendResponse } = require("../helpers/requestHandler.helper");
 const { hashValue, verifyHash } = require("../helpers/hash.helper");
 const { generateJwt } = require("../helpers/jwt.helper");
-const { welcomeEmail } = require("../helpers/mail.helper");
+const {
+  welcomeEmail,
+  sendVerificationEmail,
+} = require("../helpers/mail.helper");
 const { v4: uuidV4 } = require("uuid");
 const moment = require("moment");
 const {
@@ -11,6 +14,7 @@ const {
   JWT_REFRESH_TOKEN_EXPIRE_TIME_UNIT,
 } = require("../config/jwt.config");
 const userService = require("../services/user.service");
+const { decrypt } = require("../helpers/encryptDecrypt.helper");
 
 /**
  * Description: Login user into the application
@@ -87,11 +91,12 @@ exports.register = async (req, res, next) => {
         name: user.name,
         email: user.email,
       });
+      await sendVerificationEmail(user.email, user.name);
       return sendResponse(
         res,
         true,
         200,
-        "Registered Successfully. Please verify you email by clicking on the link sent oon you email."
+        "Registered Successfully. Please verify you email by clicking on the link sent on you email."
       );
     }
 
@@ -137,6 +142,50 @@ exports.refreshToken = async (req, res, next) => {
     } else {
       return sendResponse(res, true, 400, "Invalid Token");
     }
+  } catch (error) {
+    next(error);
+  }
+};
+
+exports.verifyEmail = async (req, res, next) => {
+  try {
+    let decryptToken = decrypt(req.validated.token);
+    decryptToken = JSON.parse(decryptToken);
+
+    const currentTime = moment().unix();
+
+    if (currentTime > decryptToken.expiryTime) {
+      return sendResponse(res, false, 401, "Link expired");
+    }
+
+    const checkToken = await userService.findOne({
+      email: decryptToken?.email,
+      emailVerificationToken: decryptToken?.token,
+    });
+
+    if (checkToken?._id) {
+      await userService.updateUserById(checkToken?._id, {
+        emailVerifiedAt: moment(),
+      });
+
+      return sendResponse(res, true, 200, "Email Verified successfully.");
+    } else {
+      return sendResponse(res, true, 400, "Invalid Link");
+    }
+  } catch (error) {
+    next(error);
+  }
+};
+
+exports.resendEmailVerificationMail = async (req, res, next) => {
+  try {
+    const user = await userService.findOne({
+      email: req.validated.email,
+    });
+    if (user._id) {
+      await sendVerificationEmail(user.email, user.name);
+    }
+    return sendResponse(res, true, 200, "Instructions sent successfully");
   } catch (error) {
     next(error);
   }
