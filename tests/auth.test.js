@@ -47,20 +47,20 @@ describe("Validation tests for the Authentication API's", () => {
       password: faker.internet.password(5),
     },
     {
-      testTitle: '"repeat_password" field required validation',
+      testTitle: '"confirm_password" field required validation',
       name: faker.name.findName(),
       email: faker.internet.exampleEmail(),
       password: faker.internet.password(8),
     },
     {
-      testTitle: '"repeat_password" field mismatch validation',
+      testTitle: '"confirm_password" field mismatch validation',
       name: faker.name.findName(),
       email: faker.internet.exampleEmail(),
       password: faker.internet.password(8),
-      repeat_password: faker.internet.password(8),
+      confirm_password: faker.internet.password(8),
     },
   ])(`Validation test (Endpoint: /register): $testTitle`, async (params) => {
-    const { _testTitle, ...payload } = params;
+    const { _testTitle, ...payload } = params; // eslint-disable-line no-unused-vars
     const response = await supertest(app).post("/register").send(payload);
     expect(response.body).toEqual(
       expect.objectContaining({
@@ -95,7 +95,7 @@ describe("Validation tests for the Authentication API's", () => {
       password: "",
     },
   ])(`Validation test (Endpoint: /login): $testTitle`, async (params) => {
-    const { _testTitle, ...payload } = params;
+    const { _testTitle, ...payload } = params; // eslint-disable-line no-unused-vars
     const response = await supertest(app).post("/login").send(payload);
     expect(response.body).toEqual(
       expect.objectContaining({
@@ -121,7 +121,7 @@ describe('Testing register API (Endpoint: "/register")', () => {
       name: faker.name.findName(),
       email: faker.internet.exampleEmail(),
       password: pwd,
-      repeat_password: pwd,
+      confirm_password: pwd,
     });
 
     expect(response.body).toEqual({
@@ -141,7 +141,7 @@ describe('Testing login API (Endpoint: "/login")', () => {
       name: faker.name.findName(),
       email,
       password: pwd,
-      repeat_password: pwd,
+      confirm_password: pwd,
     });
   });
 

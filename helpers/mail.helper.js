@@ -1,6 +1,6 @@
 const sendMail = require("../utils/mail.util");
 const ejs = require("ejs");
-const { APP_NAME } = require("../config/app.config");
+const { APP_NAME, APP_FRONT_END_APP_URL } = require("../config/app.config");
 const logger = require("../utils/winston.util");
 const path = require("path");
 
@@ -23,6 +23,7 @@ const welcomeEmail = async (params) => {
       {
         username: params.name,
         appname: APP_NAME,
+        dashboardURL: `${APP_FRONT_END_APP_URL}/dashboard`,
       }
     );
 

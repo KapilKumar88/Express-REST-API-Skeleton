@@ -2,14 +2,80 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Welcome Email</title>
+    <title>Welcome to Our Application</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+        .header {
+            background-color: #4CAF50;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+        .content {
+            padding: 20px;
+            text-align: center;
+        }
+        .content p {
+            font-size: 16px;
+            color: #333333;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+        .content a {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+        .content a:hover {
+            background-color: #45a049;
+        }
+        .footer {
+            background-color: #f4f4f4;
+            color: #888888;
+            padding: 10px;
+            text-align: center;
+            font-size: 12px;
+        }
+    </style>
 </head>
 <body>
-    <p>Hi <%= username %>,</p>
-    <p>Thanks for signing up with us </p>
-    <p> Regards,</p>
-    <p><%= appname %></p>
+    <div class="container">
+        <div class="header">
+            <h1>Welcome to <%= appname %>!</h1>
+        </div>
+        <div class="content">
+            <p>Hello <%= username %>,</p>
+            <p>Thank you for signing up to <%= appname %>. We are thrilled to have you on board! Get ready to explore our features and enjoy the best experience we have to offer.</p>
+            <p>To get started, simply click the button below to explore your dashboard:</p>
+            <a href="<%=dashboardURL%>">Go to Dashboard</a>
+            <p>If you have any questions, feel free to reach out to our support team. We're here to help!</p>
+        </div>
+        <div class="footer">
+            <p>&copy; [Year] <%= appname %>. All rights reserved.</p>
+        </div>
+    </div>
 </body>
 </html>

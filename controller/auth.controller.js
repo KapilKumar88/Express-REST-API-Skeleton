@@ -83,11 +83,16 @@ exports.register = async (req, res, next) => {
     });
 
     if (user._id) {
-      await welcomeEmail({
+      welcomeEmail({
         name: user.name,
         email: user.email,
       });
-      return sendResponse(res, true, 200, "Registered Successfully");
+      return sendResponse(
+        res,
+        true,
+        200,
+        "Registered Successfully. Please verify you email by clicking on the link sent oon you email."
+      );
     }
 
     return sendResponse(

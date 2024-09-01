@@ -18,11 +18,11 @@ const loginValidation = async (req, res, next) => {
 const registerValidation = async (req, res, next) => {
   try {
     const schema = Joi.object({
-      name: Joi.string().max(50).required(),
-      email: Joi.string().email().required(),
-      password: Joi.string().min(8).required(),
-      repeat_password: Joi.ref("password"),
-    }).with("password", "repeat_password");
+      name: Joi.string().max(50).required().label("Full Name"),
+      email: Joi.string().email().required().label("Email"),
+      password: Joi.string().min(8).required().label("Password"),
+      confirm_password: Joi.ref("password"),
+    }).with("password", "confirm_password");
 
     const { value, error } = schema.validate(req.body);
 

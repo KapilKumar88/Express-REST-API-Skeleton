@@ -2,9 +2,9 @@ openapi: 3.0.0
 info:
   description: ""
   version: "1.0.0"
-  title: "Task API"
+  title: "TODO APP"
 servers:
-  - url: http://localhost:3000
+  - url: http://localhost:3000/api
     description: local URL
 tags:
   - name: "Authentication"
@@ -33,7 +33,7 @@ paths:
                 - name
                 - email
                 - password
-                - repeat_password
+                - confirm_password
               properties:
                 name:
                   type: "string"
@@ -43,10 +43,10 @@ paths:
                   example: "john@example.com"
                 password:
                   type: "string"
-                  example: "TT ^&4675884"
-                repeat_password:
+                  example: "TT^&4675884"
+                confirm_password:
                   type: "string"
-                  example: "TT ^&4675884"
+                  example: "TT^&4675884"
       responses:
         200:
           description: OK
