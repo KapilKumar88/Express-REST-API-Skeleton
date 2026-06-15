@@ -1,10 +1,5 @@
 const userModel = require("../models/user.model");
 
-/**
- * Description: Create a record in user table
- * @param {name, email, password} params
- * @returns Promise
- */
 exports.create = (params) => {
   return userModel.create({
     name: params.name,
@@ -13,44 +8,45 @@ exports.create = (params) => {
   });
 };
 
-/**
- * Description: Count the documents by the given filter if present
- * @param {*} filter
- * @returns Promise
- */
 exports.getCount = (filter = {}) => {
   if (Object.keys(filter).length !== 0) {
     return userModel.countDocuments(filter);
   }
-
   return userModel.countDocuments();
 };
 
-/**
- * Description: find the user by ID and update details
- * @param id mongoose.Schema.Types.ObjectId
- * @param {*} params
- * @returns Promise
- */
 exports.updateUserById = (id, params) => {
   return userModel.findByIdAndUpdate(id, params);
 };
 
-/**
- * Description: find the user by email and update details
- * @param email String
- * @param {*} params
- * @returns Promise
- */
 exports.updateUserByEmail = (email, params) => {
-  return userModel.findOneAndUpdate({ email: email }, params);
+  return userModel.findOneAndUpdate({ email }, params);
 };
 
-/**
- * Description: Find the user in Database
- * @param {*} filter
- * @returns Promise
- */
+// Password excluded — safe for general use (middleware, profile, etc.)
 exports.findOne = (filter) => {
+  return userModel.findOne(filter).select("-password");
+};
+
+// Password included — only for login password verification
+exports.findOneWithPassword = (filter) => {
   return userModel.findOne(filter);
+};
+
+// Returns the updated document so the caller can read the new count in one round trip
+exports.incrementFailedAttempts = (id) => {
+  return userModel
+    .findByIdAndUpdate(id, { $inc: { failedLoginAttempts: 1 } }, { new: true })
+    .select("failedLoginAttempts");
+};
+
+exports.lockUser = (id, lockedUntil) => {
+  return userModel.findByIdAndUpdate(id, { lockedUntil });
+};
+
+exports.resetLoginAttempts = (id) => {
+  return userModel.findByIdAndUpdate(id, {
+    failedLoginAttempts: 0,
+    lockedUntil: null,
+  });
 };

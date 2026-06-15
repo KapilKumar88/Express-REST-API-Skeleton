@@ -1,5 +1,5 @@
 const Joi = require("joi");
-const crypto = require("crypto");
+const crypto = require("node:crypto");
 const { sendResponse } = require("./requestHandler.helper");
 
 /**
@@ -13,7 +13,7 @@ const { sendResponse } = require("./requestHandler.helper");
 exports.validateReqWithSchema = (req, res, next, validationSchema) => {
   const schema = Joi.object(validationSchema);
   const { value, error } = schema.validate({
-    ...req.body,
+    ...(req.body ?? {}),
     ...req.query,
     ...req.params,
   });
@@ -28,7 +28,12 @@ exports.validateReqWithSchema = (req, res, next, validationSchema) => {
   next();
 };
 
-// Generate a random token
-exports.generateRandomToken = (length = 32) => {
+// Generate a cryptographically random token (default 48 bytes = 96 hex chars = 384-bit entropy)
+exports.generateRandomToken = (length = 48) => {
   return crypto.randomBytes(length).toString("hex");
+};
+
+// sha256 hash of a value — used to store verification/reset tokens without exposing the raw value
+exports.sha256Hash = (value) => {
+  return crypto.createHash("sha256").update(value).digest("hex");
 };

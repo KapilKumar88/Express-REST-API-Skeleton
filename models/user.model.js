@@ -25,16 +25,16 @@ const userSchema = new mongoose.Schema(
       type: Date,
       default: null,
     },
-    emailVerificationToken: {
-      type: String,
+    failedLoginAttempts: {
+      type: Number,
+      default: 0,
+    },
+    lockedUntil: {
+      type: Date,
       default: null,
     },
-    refreshToken: {
-      type: String,
-      default: null,
-    },
-    refreshTokenExpireAt: {
-      type: String,
+    passwordResetAt: {
+      type: Date,
       default: null,
     },
   },

@@ -29,9 +29,17 @@ exports.create = async (req, res, next) => {
  */
 exports.update = async (req, res, next) => {
   try {
+    const task = await taskService.findById(req.validated.id);
+    if (!task) {
+      return sendResponse(res, false, 404, "Task not found");
+    }
+    if (!task.userId.equals(req.user._id)) {
+      return sendResponse(res, false, 403, "Forbidden");
+    }
+
     const result = await taskService.update(req.validated.id, {
       name: req.validated.name,
-      descrition: req.validated.description,
+      description: req.validated.description,
       status: req.validated.status,
     });
 
@@ -48,9 +56,9 @@ exports.update = async (req, res, next) => {
  * @param {*} next
  * @returns JSON
  */
-exports.list = async (_req, res, next) => {
+exports.list = async (req, res, next) => {
   try {
-    const result = await taskService.fetchAll(_req.validated);
+    const result = await taskService.fetchAll(req.validated, req.user._id);
     return sendResponse(
       res,
       true,
@@ -72,17 +80,16 @@ exports.list = async (_req, res, next) => {
  */
 exports.delete = async (req, res, next) => {
   try {
-    const result = await taskService.deleteById(req.validated.id);
-    if (result) {
-      return sendResponse(res, true, 200, "Task deleted successfully");
+    const task = await taskService.findById(req.validated.id);
+    if (!task) {
+      return sendResponse(res, false, 404, "Task not found");
+    }
+    if (!task.userId.equals(req.user._id)) {
+      return sendResponse(res, false, 403, "Forbidden");
     }
 
-    return sendResponse(
-      res,
-      false,
-      400,
-      "Something went wrong or task does not exists."
-    );
+    await taskService.deleteById(req.validated.id);
+    return sendResponse(res, true, 200, "Task deleted successfully");
   } catch (error) {
     next(error);
   }

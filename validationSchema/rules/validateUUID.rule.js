@@ -1,6 +1,6 @@
 const { validate: uuidValidate } = require("uuid");
 
-module.exports = (value, _helpers) => {
+module.exports = function validateUUID(value, _helpers) {
   if (uuidValidate(value)) {
     return value;
   }

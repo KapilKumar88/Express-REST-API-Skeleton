@@ -5,14 +5,14 @@ const taskSchema = new mongoose.Schema(
     name: {
       type: String,
       required: true,
-      min: [3, "name"],
-      max: [200, "name"],
+      minlength: [3, "name must be at least 3 characters"],
+      maxlength: [200, "name must not exceed 200 characters"],
     },
     description: {
       type: String,
       required: true,
-      min: [3, "description"],
-      max: [500, "description"],
+      minlength: [3, "description must be at least 3 characters"],
+      maxlength: [500, "description must not exceed 500 characters"],
     },
     status: {
       type: String,
@@ -30,5 +30,7 @@ const taskSchema = new mongoose.Schema(
     timestamps: true,
   }
 );
+
+taskSchema.index({ userId: 1, createdAt: -1 });
 
 module.exports = mongoose.model("task", taskSchema);

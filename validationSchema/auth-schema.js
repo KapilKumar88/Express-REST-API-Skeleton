@@ -1,13 +1,10 @@
 const Joi = require("joi");
-const { sendResponse } = require("../helpers/requestHandler.helper");
-const userService = require("../services/user.service");
 const { validateReqWithSchema } = require("../helpers/common.helper");
-const validateUUID = require("./rules/validateUUID.rule");
 
 const loginValidation = async (req, res, next) => {
   try {
     validateReqWithSchema(req, res, next, {
-      email: Joi.string().email().required(),
+      email: Joi.string().email().lowercase().trim().required(),
       password: Joi.string().required(),
     });
   } catch (error) {
@@ -15,34 +12,18 @@ const loginValidation = async (req, res, next) => {
   }
 };
 
-const registerValidation = async (req, res, next) => {
+const registerValidation = (req, res, next) => {
   try {
-    const schema = Joi.object({
-      name: Joi.string().max(50).required().label("Full Name"),
-      email: Joi.string().email().required().label("Email"),
-      password: Joi.string().min(8).required().label("Password"),
-      confirm_password: Joi.ref("password"),
-    }).with("password", "confirm_password");
-
-    const { value, error } = schema.validate(req.body);
-
-    if (error !== undefined) {
-      return sendResponse(res, false, 422, "Validations Error", {
-        message: error?.details[0]?.message,
-        field: error?.details[0]?.context?.key,
-      });
-    }
-
-    if ((await userService.getCount({ email: value.email })) > 0) {
-      return sendResponse(res, false, 422, "Validations Error", {
-        message: "Email Id already exists. Please try with different.",
-        field: "email",
-      });
-    }
-
-    // set the variable in the request for validated data
-    req.validated = value;
-    next();
+    validateReqWithSchema(req, res, next, {
+      name: Joi.string().trim().max(50).required().label("Full Name"),
+      email: Joi.string().email().lowercase().trim().required().label("Email"),
+      password: Joi.string().min(8).max(128).required().label("Password"),
+      confirm_password: Joi.string()
+        .valid(Joi.ref("password"))
+        .required()
+        .label("Confirm Password")
+        .messages({ "any.only": "Passwords do not match" }),
+    });
   } catch (error) {
     next(error);
   }
@@ -51,10 +32,7 @@ const registerValidation = async (req, res, next) => {
 const refreshTokenValidation = async (req, res, next) => {
   try {
     validateReqWithSchema(req, res, next, {
-      token: Joi.string()
-        .required()
-        .custom(validateUUID)
-        .message("Invalid Token"),
+      token: Joi.string().hex().min(64).required().label("Refresh token"),
     });
   } catch (error) {
     next(error);
@@ -71,10 +49,30 @@ const emailVerificationValidation = async (req, res, next) => {
   }
 };
 
-const resendEmailVerification = async (req, res, next) => {
+const emailOnlyValidation = (req, res, next) => {
   try {
     validateReqWithSchema(req, res, next, {
-      email: Joi.string().email().required().label("Email"),
+      email: Joi.string().email().lowercase().trim().required().label("Email"),
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+const resendEmailVerification = emailOnlyValidation;
+
+const forgotPasswordValidation = emailOnlyValidation;
+
+const resetPasswordValidation = (req, res, next) => {
+  try {
+    validateReqWithSchema(req, res, next, {
+      token: Joi.string().required().label("Token"),
+      password: Joi.string().min(8).max(128).required().label("Password"),
+      confirm_password: Joi.string()
+        .valid(Joi.ref("password"))
+        .required()
+        .label("Confirm Password")
+        .messages({ "any.only": "Passwords do not match" }),
     });
   } catch (error) {
     next(error);
@@ -87,4 +85,6 @@ module.exports = {
   refreshTokenValidation,
   resendEmailVerification,
   emailVerificationValidation,
+  forgotPasswordValidation,
+  resetPasswordValidation,
 };

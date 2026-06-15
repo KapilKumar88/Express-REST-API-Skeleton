@@ -58,8 +58,8 @@ exports.updateTaskValidation = (req, res, next) => {
 exports.getTaskValidation = (req, res, next) => {
   try {
     validateReqWithSchema(req, res, next, {
-      page: Joi.number().integer().required(),
-      limit: Joi.number().integer().required(),
+      page: Joi.number().integer().min(1).required(),
+      limit: Joi.number().integer().min(1).max(100).required(),
     });
   } catch (error) {
     next(error);

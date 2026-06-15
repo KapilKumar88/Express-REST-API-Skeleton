@@ -1,8 +1,9 @@
 const bcrypt = require("bcryptjs");
 
+const SALT_ROUNDS = 12;
+
 const hashValue = async (value) => {
-  const salt = bcrypt.genSaltSync(10);
-  return bcrypt.hashSync(value, salt);
+  return bcrypt.hash(value, SALT_ROUNDS);
 };
 
 const verifyHash = async (value, hash) => {

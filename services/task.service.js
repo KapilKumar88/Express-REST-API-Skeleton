@@ -26,9 +26,9 @@ exports.update = async (id, params) => {
  * @param {page, limit} params Object Optional
  * @returns Promise
  */
-exports.fetchAll = async (params) => {
-  let skip = (params.page - 1) * params.limit;
-  return taskModel.find().skip(skip).limit(params.limit);
+exports.fetchAll = async (params, userId) => {
+  const skip = (params.page - 1) * params.limit;
+  return taskModel.find({ userId }).skip(skip).limit(params.limit);
 };
 
 /**
@@ -55,8 +55,5 @@ exports.findById = async (id) => {
  * @return Promise
  */
 exports.countAllRecord = (filter = {}) => {
-  if (Object.keys(filter).length !== 0) {
-    return taskModel.countDocuments();
-  }
-  return taskModel.countDocuments();
+  return taskModel.countDocuments(filter);
 };

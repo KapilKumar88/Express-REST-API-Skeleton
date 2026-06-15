@@ -42,7 +42,9 @@ const sendMail = async (
 
     return !!info.messageId;
   } catch (error) {
-    logger.error(`Error in sendmail function | ErrorCode: 500`);
+    logger.error(`Error in sendmail function | ErrorCode: 500`, {
+      error: error.message,
+    });
     return false;
   }
 };

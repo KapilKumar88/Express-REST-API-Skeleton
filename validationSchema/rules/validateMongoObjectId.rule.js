@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-module.exports = (value, _helpers) => {
+module.exports = function validateMongoObjectId(value, _helpers) {
   if (mongoose.Types.ObjectId.isValid(value)) {
     return value;
   }

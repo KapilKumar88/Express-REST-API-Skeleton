@@ -2,6 +2,9 @@
   "name": "node-skeleton",
   "version": "0.0.0",
   "private": true,
+  "engines": {
+    "node": ">=22.0.0"
+  },
   "scripts": {
     "start": "node ./bin/www",
     "start:dev": "nodemon ./bin/www",
@@ -9,46 +12,61 @@
     "lint": "eslint ./",
     "lint:fix": "eslint ./ --fix",
     "prettier": "npx prettier --write ./",
-    "prepare": "husky install"
+    "prepare": "husky",
+    "generate:secrets": "node ./scripts/generate-secrets.js"
   },
   "jest": {
+    "coverageProvider": "v8",
     "coverageReporters": [
       "html"
-    ]
+    ],
+    "globalSetup": "./tests/globalSetup.js",
+    "globalTeardown": "./tests/globalTeardown.js",
+    "setupFiles": [
+      "./tests/setup.js"
+    ],
+    "setupFilesAfterEnv": [
+      "./tests/teardown.js"
+    ],
+    "testEnvironment": "node"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
-    "body-parser": "^1.19.0",
-    "cookie-parser": "~1.4.4",
-    "cors": "^2.8.5",
-    "debug": "~2.6.9",
-    "dotenv": "^10.0.0",
+    "cors": "^2.8.6",
+    "debug": "^4.3.7",
+    "dotenv": "^16.5.0",
     "ejs": "^3.1.8",
-    "express": "~4.16.1",
-    "joi": "^17.4.2",
-    "jsonwebtoken": "^8.5.1",
-    "moment": "^2.29.1",
-    "mongoose": "^6.0.11",
-    "morgan": "~1.9.1",
-    "nodemailer": "^6.7.2",
-    "swagger-ui-express": "^4.3.0",
-    "uuid": "^8.3.2",
-    "winston": "^3.4.0",
-    "winston-daily-rotate-file": "^4.5.5",
+    "express": "^5.0.0",
+    "express-mongo-sanitize": "^2.2.0",
+    "express-rate-limit": "^8.5.2",
+    "helmet": "^8.2.0",
+    "joi": "18.2.1",
+    "jsonwebtoken": "^9.0.3",
+    "moment": "^2.30.1",
+    "mongoose": "^8.0.0",
+    "morgan": "^1.11.0",
+    "nodemailer": "^9.0.0",
+    "swagger-ui-express": "^5.0.1",
+    "uuid": "^11.1.1",
+    "winston": "^3.19.0",
+    "winston-daily-rotate-file": "^5.0.0",
     "yamljs": "^0.3.0"
   },
   "devDependencies": {
-    "eslint": "^8.16.0",
-    "eslint-config-prettier": "^8.5.0",
-    "eslint-config-standard": "^17.0.0",
-    "eslint-plugin-prettier": "^4.2.1",
-    "faker": "^5.5.3",
-    "husky": "^8.0.1",
-    "jest": "^27.3.1",
-    "lint-staged": "^13.0.0",
-    "nodemon": "^2.0.18",
-    "prettier": "2.7.1",
-    "supertest": "^6.1.6"
+    "@faker-js/faker": "^9.4.0",
+    "eslint": "^9.39.4",
+    "eslint-config-prettier": "^10.1.5",
+    "eslint-plugin-prettier": "^5.5.6",
+    "husky": "^9.1.7",
+    "jest": "^30.4.2",
+    "lint-staged": "^17.0.7",
+    "mongodb-memory-server": "^11.2.0",
+    "nodemon": "^3.1.14",
+    "prettier": "^3.5.3",
+    "supertest": "^7.2.2"
+  },
+  "overrides": {
+    "glob": "^13.0.0"
   },
   "lint-staged": {
     "*.js": "eslint --cache --fix",
